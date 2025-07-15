@@ -1,20 +1,22 @@
-import React from "react";
-import { useThemeColor } from "@/hooks/common/useThemeColor";
-import colors from "@/styles/colors";
-import { SvgXml } from 'react-native-svg';
+import React from 'react';
+import { useThemeColor } from '@/hooks/common/useThemeColor';
+import colors from '@/styles/colors';
 
-// 또는 require로 시도
-const ArrowIcon = require("@/assets/icons/arrow.svg").default;
-const CancelIcon = require("@/assets/icons/cancel.svg").default;
-const HomeIcon = require("@/assets/icons/home.svg").default;
-const UploadIcon = require("@/assets/icons/upload.svg").default;
-const MyIcon = require("@/assets/icons/my.svg").default;
+// SVG 파일들을 컴포넌트로 import
+import ArrowIcon from '../../assets/icons/arrow.svg';
+import CancelIcon from '../../assets/icons/cancel.svg';
+import HomeIcon from '../../assets/icons/home.svg';
+import UploadIcon from '../../assets/icons/upload.svg';
+import MyIcon from '../../assets/icons/my.svg';
+import PicIcon from '../../assets/icons/pic.svg';
+import CameraIcon from '../../assets/icons/camera.svg';
+import MosaicIcon from '../../assets/icons/mosaic.svg';
+import AiIcon from '../../assets/icons/ai.svg';
 
 interface CustomIconType {
-  size: string; // 아이콘 사이즈
-  type: "arrow" | "cancel" | "home" | "upload" | "my"; // 아이콘 이름
+  type: "arrow" | "cancel" | "home" | "upload" | "my" | "pic" | "camera" | "mosaic" | "ai";
+  size?: string;
   style?: any;
-  onPress?: () => void;
 }
 
 const iconMap = {
@@ -23,27 +25,30 @@ const iconMap = {
   home: HomeIcon,
   upload: UploadIcon,
   my: MyIcon,
+  pic: PicIcon,
+  camera: CameraIcon,
+  mosaic: MosaicIcon,
+  ai: AiIcon,
 };
 
-const CustomIcon = (props: CustomIconType) => {
-  const { size, type, style } = props;
+const CustomIcon = ({ type, size = '24', style }: CustomIconType) => {
   const color = useThemeColor(
-    { light: colors.white, dark: colors.black },
+    { light: colors.black, dark: colors.white },
     "text"
-  ); //useThemeColor 훅 사용
+  );
 
-  const IconComponent = type ? iconMap[type] : undefined;
+  const IconComponent = iconMap[type];
+
+  if (!IconComponent) return null;
 
   return (
-
-      IconComponent && (
-        <IconComponent
-        // @ts-ignore
-          style={{ color: style?.color ?? color }}
-          width={size}
-          height={size}
-        />
-      )
+    <IconComponent
+      width={size}
+      height={size}
+      fill={type === 'mosaic' ? 'none' : (style?.color ?? color)}
+      stroke={type === 'mosaic' ? (style?.color ?? color) : undefined}
+      style={style}
+    />
   );
 };
 

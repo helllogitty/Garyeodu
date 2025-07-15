@@ -6,7 +6,7 @@ import CustomHeader from "../CustomHeader";
 interface CustomViewType {
   title: string;
   onPressLeftIcon: () => void;
-  onPressRightIcon?: () => void;
+  icon?: "arrow" | "cancel" | "home" | "upload" | "my";
   children?: ReactNode;
   themeType?: "Normal" | "Bright" | undefined;
 }
@@ -20,7 +20,7 @@ const CustomView = (props: CustomViewType) => {
     { light: Colors.light.white, dark: Colors.dark.white },
     "text"
   );
-  const { title, onPressLeftIcon, children, themeType } =
+  const { title, onPressLeftIcon, children, themeType, icon } =
     props;
   return (
     <S.SafeView
@@ -30,6 +30,7 @@ const CustomView = (props: CustomViewType) => {
         <CustomHeader
           title={title}
           onPressLeftIcon={onPressLeftIcon}
+          icon={icon}
         />
 
         {children}

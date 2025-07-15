@@ -10,27 +10,28 @@ import { ThemedText } from '@/components/ThemedText';
 interface CustomHeader {
   title:string;
   onPressLeftIcon:()=>void;
+  icon?: "arrow" | "cancel" | "home" | "upload" | "my";
   style?:any;
   contentColor? : string;
 }
 
 const CustomHeader = (props:CustomHeader) => {
-  const {title, onPressLeftIcon, style, contentColor} = props;
+  const {title, onPressLeftIcon, style, contentColor, icon} = props;
 
   const color = useThemeColor({light:colors.black, dark:colors.white},'text');
 
   return (
     <S.Layout style={style}>
-      <S.TitleContainer>
+      <S.IconContainer>
         <Pressable 
-          style={[{width: 24, height: 24}]} 
           onPress={onPressLeftIcon}
         >
-          <CustomIcon type='arrow' size='24' style={{color:contentColor ?? color}}/>
+          <CustomIcon type={icon ?? 'arrow' as any} size='24' style={{color:contentColor ?? color}}/>
         </Pressable>
-          <ThemedText type="bodyMedium" style={{color:contentColor ?? color}}>{title}</ThemedText>
+      </S.IconContainer>
+      <S.TitleContainer>
+        <ThemedText type="bodyNormal" style={{color:contentColor ?? color}}>{title}</ThemedText>
       </S.TitleContainer>
-
     </S.Layout>
   )
 }
