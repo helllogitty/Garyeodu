@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Image, Dimensions } from 'react-native'
+import { Image, Dimensions, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import CustomView from '@/components/ui/CustomView'
 import { ThemedText } from '@/components/ThemedText'
 import * as S from './style'
 import CustomIcon from '@/components/ui/CustomIcon'
 import StyledBtn from '@/components/ui/StyledBtn'
-import { View } from 'react-native'
 
 
 const AiEdit = () => {
@@ -15,6 +14,13 @@ const AiEdit = () => {
   const screenWidth = Dimensions.get('window').width
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 })
   const [selectedMethod, setSelectedMethod] = useState<'mosaic' | 'ai'>('mosaic') // 추가
+
+  const handleComplete = () => {
+    router.push({
+      pathname: '/(edit)/(photoResult)',
+      params: { imageUri: imageUri } // imageUri 전달
+    })
+  }
 
   useEffect(() => {
     if (imageUri) {
@@ -55,8 +61,8 @@ const AiEdit = () => {
           />
         </S.ImageContainer>
       )}
-      <S.Container>
-        <View style={{gap: 12}}>
+      <S.Container >
+        <View style={{gap: 12, marginTop: 12}}>
         <ThemedText type='HeadingSmall'>편집 방식</ThemedText>
         <S.SelectButtonWrapper>
           <S.MethodButton 
@@ -94,7 +100,12 @@ const AiEdit = () => {
           </S.MethodButton>
         </S.SelectButtonWrapper>
         </View>
-        <StyledBtn label='사진 편집' isActive={!!selectedMethod} onPress={()=>{router.push('/(edit)/(aiPhotoEdit)')}}/>
+        <StyledBtn
+          label="편집 완료"
+          onPress={handleComplete}
+          isActive={!!selectedMethod}
+          style={{ backgroundColor: '#000000' }}
+        />
       </S.Container>
      
     </CustomView>
