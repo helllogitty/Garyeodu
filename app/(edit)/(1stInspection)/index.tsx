@@ -4,7 +4,8 @@ import StyledBtn from "@/components/ui/StyledBtn";
 import { detectPersonalInfoAPI } from "@/hooks/detectPersonalInfoAPI";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, Image } from "react-native";
+import { ActivityIndicator, Dimensions, Image, Alert } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as S from "./style";
 
 interface DetectedArea {
@@ -31,6 +32,7 @@ const FirstInspection = () => {
   const [detectedAreas, setDetectedAreas] = useState<DetectedArea[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasDetected, setHasDetected] = useState(false);
+  const [rawDetectedData, setRawDetectedData] = useState<any>(null);
 
   useEffect(() => {
     if (imageUri) {
@@ -82,10 +84,16 @@ const FirstInspection = () => {
         const detectedData = result["이미지 파일 개인정보 문제"];
         console.log('🔍 감지된 데이터:', JSON.stringify(detectedData, null, 2));
         
+        // 원본 데이터 저장
+        setRawDetectedData(detectedData);
+        
         // 상태가 "안전"인지 확인
         if (detectedData.상태 === "안전") {
           setDetectedAreas([]);
           setHasDetected(true);
+          
+          // 안전한 이미지도 AsyncStorage에 저장
+          await saveToAsyncStorage(detectedData, []);
           return;
         }
         
@@ -93,7 +101,6 @@ const FirstInspection = () => {
         const areas: DetectedArea[] = [];
         
         Object.entries(detectedData).forEach(([key, info]: [string, any]) => {
-          // "메시지"와 "상태" 키는 제외하고 실제 감지된 정보만 처리
           if (key !== "메시지" && key !== "상태" && info?.위치 && info?.종류) {
             console.log(`📍 항목 ${key}:`, {
               종류: info.종류,
@@ -101,8 +108,8 @@ const FirstInspection = () => {
             });
             
             areas.push({
-              x: Number(info.위치.top),
-              y: Number(info.위치.left),
+              x: Number(info.위치.left || info.위치.x),
+              y: Number(info.위치.top || info.위치.y),
               width: Number(info.위치.width),
               height: Number(info.위치.height),
               type: info.종류
@@ -113,14 +120,76 @@ const FirstInspection = () => {
         console.log('🎯 최종 areas 배열:', areas);
         setDetectedAreas(areas);
         setHasDetected(true);
+        
+        // AsyncStorage에 저장
+        await saveToAsyncStorage(detectedData, areas);
+        
+      } else {
+        console.log('예상과 다른 응답 구조:', result);
+        setDetectedAreas([]);
+        setHasDetected(true);
+        
+        // 빈 결과도 저장
+        await saveToAsyncStorage(null, []);
       }
+
     } catch (error) {
       console.error('개인정보 감지 실패:', error);
-      // 에러 시에도 화면 업데이트 (안전한 이미지로 간주)
+      Alert.alert('오류', '개인정보 감지에 실패했습니다.');
       setDetectedAreas([]);
       setHasDetected(true);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // AsyncStorage 저장 함수
+  const saveToAsyncStorage = async (detectedData: any, areas: DetectedArea[]) => {
+    try {
+      // 좌표 JSON 문자열 생성
+      const regionsJson = detectedData ? JSON.stringify({
+        "이미지 파일 개인정보 문제": detectedData
+      }) : JSON.stringify({});
+
+      // 저장할 데이터 구조
+      const dataToSave = {
+        imageUri: imageUri,
+        detectedAreas: areas,
+        rawDetectedData: detectedData,
+        regionsJson: regionsJson, // JSON 문자열로 저장
+        originalDimensions: originalDimensions,
+        timestamp: Date.now(),
+        status: detectedData?.상태 || 'unknown',
+        detectedCount: areas.length
+      };
+
+      console.log('💾 AsyncStorage에 저장할 데이터:', {
+        imageUri: dataToSave.imageUri ? '✅ 있음' : '❌ 없음',
+        detectedAreas: `${dataToSave.detectedAreas.length}개`,
+        regionsJson: dataToSave.regionsJson.length + ' characters',
+        status: dataToSave.status
+      });
+
+      // 메인 데이터 저장
+      await AsyncStorage.setItem('detectionResult', JSON.stringify(dataToSave));
+      
+      // 추가로 개별 항목들도 저장 (필요시 사용)
+      await AsyncStorage.setItem('imageUri', imageUri || '');
+      await AsyncStorage.setItem('regionsJson', regionsJson);
+      
+      console.log('✅ AsyncStorage 저장 완료');
+      
+      // 저장 확인
+      const saved = await AsyncStorage.getItem('detectionResult');
+      if (saved) {
+        console.log('✅ 저장 검증 성공');
+      } else {
+        console.error('❌ 저장 검증 실패');
+      }
+
+    } catch (error) {
+      console.error('❌ AsyncStorage 저장 실패:', error);
+      Alert.alert('오류', '데이터 저장에 실패했습니다.');
     }
   };
 
@@ -137,19 +206,63 @@ const FirstInspection = () => {
     };
   };
 
-  const handleNext = () => {
-    router.push({
-      pathname: "/(edit)/(aiPhotoEdit)",
-      params: {
-        imageUri: imageUri,
-        detectedAreas: JSON.stringify(detectedAreas),
-      },
-    });
+  // 다음 단계로 이동
+  const handleNext = async () => {
+    try {
+      // 이미 저장되어 있지만 한 번 더 확인
+      const existingData = await AsyncStorage.getItem('detectionResult');
+      
+      if (!existingData) {
+        console.log('⚠️ 저장된 데이터가 없어서 다시 저장 시도');
+        await saveToAsyncStorage(rawDetectedData, detectedAreas);
+      }
+
+      console.log('🚀 다음 단계로 이동');
+      
+      router.push({
+        pathname: "/(edit)/(photoResult)",
+        params: {
+          resultKey: 'detectionResult',
+          detectedCount: detectedAreas.length.toString(),
+        },
+      });
+    } catch (error) {
+      console.error('❌ 다음 단계 이동 실패:', error);
+      Alert.alert('오류', '다음 단계로 이동할 수 없습니다.');
+    }
   };
 
   const handleGoToFirst = () => {
     router.dismiss(1);
   };
+
+  // 저장된 데이터 확인 함수 (디버깅용)
+  const checkSavedData = async () => {
+    try {
+      const data = await AsyncStorage.getItem('detectionResult');
+      const imageUri = await AsyncStorage.getItem('imageUri');
+      const regionsJson = await AsyncStorage.getItem('regionsJson');
+      
+      console.log('📋 저장된 데이터 확인:');
+      console.log('- detectionResult:', data ? '✅' : '❌');
+      console.log('- imageUri:', imageUri ? '✅' : '❌');
+      console.log('- regionsJson:', regionsJson ? '✅' : '❌');
+      
+      if (data) {
+        const parsed = JSON.parse(data);
+        console.log('- 파싱된 데이터 구조:', Object.keys(parsed));
+      }
+    } catch (error) {
+      console.error('데이터 확인 실패:', error);
+    }
+  };
+
+  // useEffect에 데이터 확인 추가 (개발용)
+  useEffect(() => {
+    if (hasDetected) {
+      checkSavedData();
+    }
+  }, [hasDetected]);
 
   return (
     <CustomView title="1차 검수" onPressLeftIcon={() => router.back()}>
