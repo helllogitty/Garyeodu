@@ -6,20 +6,25 @@ export const Container = styled.View`
 `;
 
 export const TitleSection = styled.View`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   align-items: center;
-  min-height: 60px;
+  min-height: 80px;
   justify-content: center;
 `;
 
-export const ImageContainer = styled.View`
+export const ImageSection = styled.View`
+  flex: 1;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  margin-vertical: 20px;
 `;
 
 export const ImageWrapper = styled.View`
   position: relative;
+`;
+
+export const BottomSection = styled.View`
+  margin-top: 20px;
 `;
 
 export const DetectionCircle = styled.View`
@@ -30,7 +35,7 @@ export const DetectionCircle = styled.View`
 `;
 
 export const DetectionList = styled.View`
-  margin-top: 20px;
+  margin-bottom: 20px;
   padding: 15px;
   background-color: #f8f9fa;
   border-radius: 10px;
@@ -38,11 +43,4 @@ export const DetectionList = styled.View`
 
 export const DetectionItem = styled.View`
   margin-bottom: 5px;
-`;
-
-export const NextButton = styled.Pressable`
-  background-color: #007AFF;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 20px;
 `;

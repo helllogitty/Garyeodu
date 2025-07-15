@@ -4,7 +4,7 @@ import { ThemedText } from '../ThemedText'
 import * as S from './style'
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 interface PicBtnProps {
   onImageSelected?: (uri: string) => void;
@@ -29,13 +29,36 @@ const PicBtn = ({ onImageSelected }: PicBtnProps) => {
       loadImage();
     }, []);
 
+    const requestPermissionWithRetry = async (type: 'camera' | 'library') => {
+      const permission = type === 'camera' 
+        ? await ImagePicker.requestCameraPermissionsAsync()
+        : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (permission.status !== 'granted') {
+        const message = type === 'camera' 
+          ? '사진을 촬영하려면 카메라 접근 권한이 필요합니다.'
+          : '사진을 선택하려면 갤러리 접근 권한이 필요합니다.';
+
+        Alert.alert(
+          '권한 필요',
+          message,
+          [
+            { text: '취소', style: 'cancel' },
+            { 
+              text: '설정으로 이동', 
+              onPress: () => Linking.openSettings() 
+            }
+          ]
+        );
+        return false;
+      }
+      return true;
+    };
+
     // 이미지 선택
     const pickImage = async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('권한 필요', '프로필 사진을 변경하려면 갤러리 접근 권한이 필요합니다.');
-        return;
-      }
+      const hasPermission = await requestPermissionWithRetry('library');
+      if (!hasPermission) return;
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'], // 변경된 부분
@@ -62,11 +85,8 @@ const PicBtn = ({ onImageSelected }: PicBtnProps) => {
 
     // 카메라로 사진 찍기
     const takePhoto = async () => {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('권한 필요', '사진을 찍으려면 카메라 접근 권한이 필요합니다.');
-        return;
-      }
+      const hasPermission = await requestPermissionWithRetry('camera');
+      if (!hasPermission) return;
 
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'], // 변경된 부분
