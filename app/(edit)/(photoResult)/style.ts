@@ -13,11 +13,3 @@ export const Container = styled.View`
   align-items: center;
   padding: 20px;
 `
-
-export const ButtonContainer = styled.View`
-  width: 100%;
-  gap: 12px;
-  margin-top: 20px;
-  justify-content: flex-end;
-  flex: 1;
-`;
