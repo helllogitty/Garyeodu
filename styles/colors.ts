@@ -1,8 +1,10 @@
 const colors = {
-  primary: '#FF6562',
+  primary: '#0F1417',
   primary60: 'rgba(255, 101, 98, 0.6)',
   primary20: 'rgba(255, 101, 98, 0.2)',
   primary10: 'rgba(255, 101, 98, 0.1)',
+
+  blue : "#0A80ED",
 
   gray1: '#828282',
   gray2: '#BDBDBD',

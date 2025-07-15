@@ -10,7 +10,7 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    primary: "#FF6562",
+    primary: "#0F1417",
     primary60: "rgba(255, 101, 98, 0.6)",
     primary20: "rgba(255, 101, 98, 0.2)",
     primary10: "rgba(255, 101, 98, 0.1)",

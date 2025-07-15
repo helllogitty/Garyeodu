@@ -9,7 +9,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SokchoBadaDotum.ttf'),
+    SokchoBadaDotum : require('../assets/fonts/SokchoBadaDotum.ttf'),
   });
 
   if (!loaded) {
