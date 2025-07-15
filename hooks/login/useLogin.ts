@@ -18,6 +18,7 @@ export const useLogin = () =>{
         if (isChecked && emailText && passText) {
             try {
                 await AsyncStorage.setItem('USER', JSON.stringify(signinDto));
+                console.log("성공")
             } catch (error) {
                 console.error("로그인 실패:", error);
             }
