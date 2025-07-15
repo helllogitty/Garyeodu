@@ -46,6 +46,7 @@
     "expo-symbols": "^0.4.5",
     "expo-system-ui": "^5.0.9",
     "expo-web-browser": "^14.2.0",
+    "firebase": "^11.10.0",
     "lucide-react-native": "^0.511.0",
     "query-string": "^6.14.1",
     "r3f-native-orbitcontrols": "^1.0.12",
