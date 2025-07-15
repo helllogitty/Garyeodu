@@ -89,6 +89,7 @@ export const QuizImage = styled.Image`
 export const ProfileRow = styled.View`
   flex-direction: row;
   align-items: center;
+  marginTop: 16px;
   padding: 16px;
 `;
 
@@ -130,5 +131,33 @@ export const BannerText = styled.Text`
   color: #fff;
   font-size: 20px;
   font-weight: bold;
+`;
+
+export const NewsItemLarge = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  margin-vertical: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: #f8f8f8;
+`;
+
+export const NewsIconLarge = styled.Image`
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+`;
+
+export const NewsTitleLarge = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding-right: 20px;
+`;
+
+export const NewsSourceLarge = styled.Text`
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
 `;
 

@@ -1,13 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { XMLParser } from 'fast-xml-parser';
 import React, { useEffect, useState } from 'react';
-import { Linking, ScrollView, View } from 'react-native';
+import { ImageSourcePropType, Linking, ScrollView, View } from 'react-native';
 import * as S from './style';
 
 const HomeScreen = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [newsList, setNewsList] = useState<NewsItemType[]>([]);
   const defaultImage = require('@/assets/images/User.png');
+
+  // ✅ 고정 이미지 4개
+  const newsImages: ImageSourcePropType[] = [
+    require('../../assets/images/news1.png'),
+    require('../../assets/images/news2.png'),
+    require('../../assets/images/news3.png'),
+    require('../../assets/images/news4.png'),
+  ];
 
   type NewsItemType = {
     제목: string;
@@ -28,7 +36,6 @@ const HomeScreen = () => {
 
       const parser = new XMLParser();
       const json = parser.parse(xml);
-
       const items = json.rss.channel.item;
 
       const parsed: NewsItemType[] = items.map((item: any) => ({
@@ -39,7 +46,7 @@ const HomeScreen = () => {
         키워드: '사진 개인정보 유출',
       }));
 
-      setNewsList(parsed.slice(0, 3)); // 앞에서 3개만
+      setNewsList(parsed.slice(0, 5)); // ✅ 뉴스 5개로 확장
     } catch (err) {
       console.error('❌ RSS 불러오기 실패:', err);
     }
@@ -56,50 +63,40 @@ const HomeScreen = () => {
     };
 
     loadProfileImage();
-    fetchPrivacyNews(); // ✅ RSS 호출
+    fetchPrivacyNews();
   }, []);
 
   return (
-      <S.Container>
-        <S.ProfileRow>
-          <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
-          <S.Header>이윤하님</S.Header>
-        </S.ProfileRow>
+    <S.Container>
+      <S.ProfileRow>
+        <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
+        <S.Header>이윤하님</S.Header>
+      </S.ProfileRow>
 
-        <S.BannerWrapper>
-          <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
-          <S.BannerText>Service Update</S.BannerText>
-        </S.BannerWrapper>
-        <View>
-          <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
-          {newsList.map((item, index) => {
-            const fullUrl = item.링크.startsWith('http') ? item.링크 : `https://${item.링크}`;
-            return (
-              <S.NewsItem key={index} onPress={() => Linking.openURL(fullUrl)}>
-                <S.NewsIcon source={require('@/assets/images/news1.png')} />
-                <S.NewsTextContainer>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <S.NewsTitle>{item.제목}</S.NewsTitle>
-                  </ScrollView>
-                  <S.NewsSource>{item.날짜}</S.NewsSource>
-                </S.NewsTextContainer>
-              </S.NewsItem>
-            );})}
-        </View>
-        {/* <S.SectionTitle>퀴즈</S.SectionTitle> */}
-        {/* <S.QuizContainer>
-          <S.QuizText>
-            <S.QuizTitle>Test Your Knowledge</S.QuizTitle>
-            <S.QuizDescription>
-              Take a quick quiz to assess your understanding of online privacy best practices.
-            </S.QuizDescription>
-            <S.QuizButton>
-              <S.QuizButtonText>Start Quiz</S.QuizButtonText>
-            </S.QuizButton>
-          </S.QuizText>
-          <S.QuizImage source={require('@/assets/images/QuizImage.png')} />
-        </S.QuizContainer> */}
-      </S.Container>
+      <S.BannerWrapper>
+        <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
+        <S.BannerText>Service Update</S.BannerText>
+      </S.BannerWrapper>
+
+      <View>
+        <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
+        {newsList.map((item, index) => {
+          const fullUrl = item.링크.startsWith('http') ? item.링크 : `https://${item.링크}`;
+          const newsImage = newsImages[index % newsImages.length]; // ✅ 고정 이미지 순환
+          return (
+            <S.NewsItemLarge key={index} onPress={() => Linking.openURL(fullUrl)}>
+              <S.NewsIconLarge source={newsImage} />
+              <S.NewsTextContainer>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <S.NewsTitleLarge>{item.제목}</S.NewsTitleLarge>
+                </ScrollView>
+                <S.NewsSourceLarge>{item.날짜}</S.NewsSourceLarge>
+              </S.NewsTextContainer>
+            </S.NewsItemLarge>
+          );
+        })}
+      </View>
+    </S.Container>
   );
 };
 
