@@ -17,7 +17,7 @@ export default function Index() {
     useEffect(() => {
                                         
         const timer = setTimeout(async () => {
-            router.replace(await isLoggedIn() ? "/(main)" : "/(login)");
+            router.replace(await isLoggedIn() ? "/(main)/home" : "/(login)");
         }, 3000);
 
         return () => clearTimeout(timer);
