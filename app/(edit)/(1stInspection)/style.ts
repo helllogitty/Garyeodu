@@ -8,6 +8,8 @@ export const Container = styled.View`
 export const TitleSection = styled.View`
   margin-bottom: 30px;
   align-items: center;
+  min-height: 60px;
+  justify-content: center;
 `;
 
 export const ImageContainer = styled.View`
@@ -36,4 +38,11 @@ export const DetectionList = styled.View`
 
 export const DetectionItem = styled.View`
   margin-bottom: 5px;
+`;
+
+export const NextButton = styled.Pressable`
+  background-color: #007AFF;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
 `;
