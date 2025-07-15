@@ -1,6 +1,7 @@
 import styled from "styled-components/native";
 import colors from "../../styles/colors";
 import { Dimensions } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
 
 export const Container = styled.View`
     flex:1;
@@ -45,10 +46,9 @@ export const SaveIdBtn = styled.TouchableOpacity<{isChecked:boolean}>`
   border-radius: 6px;
 `
 
-// style.ts 내부에 추가
-export const Logo = styled.Image`
-  width: 59px;
-  height: 34px;
+export const Logo = styled(ThemedText)`
+  font-family : 'SokchoBadaDotum';
+  font-size: 32px;
 `;
 
 export const SaveIdText = styled.Text`
