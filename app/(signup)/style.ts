@@ -1,6 +1,5 @@
 import styled from "styled-components/native";
 import colors from "../../styles/colors";
-import { Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 
 export const Container = styled.View`
@@ -36,15 +35,6 @@ export const SaveIdView = styled.View`
   height: 22px;
   gap: 5px;
 `
-export const SaveIdBtn = styled.TouchableOpacity<{isChecked:boolean}>`
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  height: 20px;
-  border-color: ${({isChecked}) => isChecked ? colors.primary : colors.gray3};
-  border-width: 1px;
-  border-radius: 6px;
-`
 
 export const Logo = styled(ThemedText)`
   font-family : 'SokchoBadaDotum';
@@ -69,10 +59,4 @@ export const SignupLink = styled.Text`
   color: ${colors.primary};
   text-decoration: underline;
   text-decoration-color: ${colors.primary};
-`;
-
-export const SaveIdBtnIcon = styled.Image<{ isChecked: boolean }>`
-  width: 10px;
-  height: 10px;
-  tint-color: ${({ isChecked }) => (isChecked ? colors.primary : 'transparent')};
 `;

@@ -76,6 +76,7 @@ export default function ProfileScreen() {
   };
 
   return (
+    
     <S.Container>
       <S.HeaderContainer />
       <S.ProfileSection>

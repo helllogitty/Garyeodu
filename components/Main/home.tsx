@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { XMLParser } from 'fast-xml-parser';
 import React, { useEffect, useState } from 'react';
-import { Linking, ScrollView } from 'react-native';
+import { Linking, ScrollView, View } from 'react-native';
 import * as S from './style';
 
 const HomeScreen = () => {
@@ -60,8 +60,7 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <S.Container>
-      <ScrollView>
+      <S.Container>
         <S.ProfileRow>
           <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
           <S.Header>이윤하님</S.Header>
@@ -71,24 +70,22 @@ const HomeScreen = () => {
           <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
           <S.BannerText>Service Update</S.BannerText>
         </S.BannerWrapper>
-
-        <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
-
-        {newsList.map((item, index) => {
-          const fullUrl = item.링크.startsWith('http') ? item.링크 : `https://${item.링크}`;
-          return (
-            <S.NewsItem key={index} onPress={() => Linking.openURL(fullUrl)}>
-              <S.NewsIcon source={require('@/assets/images/news1.png')} />
-              <S.NewsTextContainer>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <S.NewsTitle>{item.제목}</S.NewsTitle>
-                </ScrollView>
-                <S.NewsSource>{item.날짜}</S.NewsSource>
-              </S.NewsTextContainer>
-            </S.NewsItem>
-          );
-        })}
-
+        <View>
+          <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
+          {newsList.map((item, index) => {
+            const fullUrl = item.링크.startsWith('http') ? item.링크 : `https://${item.링크}`;
+            return (
+              <S.NewsItem key={index} onPress={() => Linking.openURL(fullUrl)}>
+                <S.NewsIcon source={require('@/assets/images/news1.png')} />
+                <S.NewsTextContainer>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <S.NewsTitle>{item.제목}</S.NewsTitle>
+                  </ScrollView>
+                  <S.NewsSource>{item.날짜}</S.NewsSource>
+                </S.NewsTextContainer>
+              </S.NewsItem>
+            );})}
+        </View>
         {/* <S.SectionTitle>퀴즈</S.SectionTitle> */}
         {/* <S.QuizContainer>
           <S.QuizText>
@@ -102,8 +99,7 @@ const HomeScreen = () => {
           </S.QuizText>
           <S.QuizImage source={require('@/assets/images/QuizImage.png')} />
         </S.QuizContainer> */}
-      </ScrollView>
-    </S.Container>
+      </S.Container>
   );
 };
 
