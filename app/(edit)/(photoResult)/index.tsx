@@ -1,11 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
 import CustomView from "@/components/ui/CustomView";
 import StyledBtn from "@/components/ui/StyledBtn";
+import { blurImageRegions } from "@/hooks/blurImageRegions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Dimensions, Image, View } from "react-native";
-import { blurImageRegions } from "../../../hooks/blurImageRegions";
 import * as S from "./style";
 
 const Result = () => {

@@ -65,41 +65,64 @@ const FirstInspection = () => {
 
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("image", {
-        uri: imageUri,
-        type: "image/jpeg",
-        name: "image.jpg",
-      } as any);
+      console.log("🔍 업로드할 이미지 URI:", imageUri);
 
-      const response = await fetch(
+      // 이미지 파일을 fetch로 가져와서 blob으로 변환
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+
+      console.log("📁 Blob 생성 완료:", blob.size, "bytes");
+
+      // FormData 생성
+      const formData = new FormData();
+
+      // 실제 파일 객체로 append
+      formData.append("image", blob);
+
+      console.log("📤 FormData 생성 완료, API 요청 시작", blob);
+
+      // API 요청
+      const apiResponse = await fetch(
         `https://port-0-garyeodu-img-server-m63r1iv4e3e8a9d8.sel4.cloudtype.app/image-processing/detect`,
         {
           method: "POST",
           body: formData,
+          // headers는 설정하지 않음 - FormData 사용 시 자동 설정됨
         }
       );
 
-      const result = await response.json();
+      console.log("📡 API 응답 상태:", apiResponse.status);
 
+      const result = await apiResponse.json();
+      console.log("📝 서버 응답:", result);
+
+      // 400 에러 처리
+      if (!apiResponse.ok) {
+        if (apiResponse.status === 400) {
+          console.error("❌ 파일 업로드 실패:", result.message);
+          Alert.alert(
+            "업로드 오류",
+            result.message || "이미지 파일 업로드에 실패했습니다."
+          );
+          return;
+        }
+        throw new Error(`HTTP error! status: ${apiResponse.status}`);
+      }
+
+      // 성공 시 기존 로직 실행
       if (result && result["이미지 파일 개인정보 문제"]) {
         const detectedData = result["이미지 파일 개인정보 문제"];
         console.log("🔍 감지된 데이터:", JSON.stringify(detectedData, null, 2));
 
-        // 원본 데이터 저장
         setRawDetectedData(detectedData);
 
-        // 상태가 "안전"인지 확인
         if (detectedData.상태 === "안전") {
           setDetectedAreas([]);
           setHasDetected(true);
-
-          // 안전한 이미지도 AsyncStorage에 저장
           await saveToAsyncStorage(detectedData, []);
           return;
         }
 
-        // 민감정보가 감지된 경우
         const areas: DetectedArea[] = [];
 
         Object.entries(detectedData).forEach(([key, info]: [string, any]) => {
@@ -122,15 +145,11 @@ const FirstInspection = () => {
         console.log("🎯 최종 areas 배열:", areas);
         setDetectedAreas(areas);
         setHasDetected(true);
-
-        // AsyncStorage에 저장
         await saveToAsyncStorage(detectedData, areas);
       } else {
         console.log("예상과 다른 응답 구조:", result);
         setDetectedAreas([]);
         setHasDetected(true);
-
-        // 빈 결과도 저장
         await saveToAsyncStorage(null, []);
       }
     } catch (error) {
