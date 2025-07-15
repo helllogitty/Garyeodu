@@ -1,25 +1,31 @@
 import * as S from './style';
 import StyledBtn from "@/components/ui/StyledBtn";
 import StyledInput from "@/components/ui/StyledInput";
-import { useLogin } from "@/hooks/login/useLogin";
+import { useSignup } from "@/hooks/signup/useSignup";
 import { router } from "expo-router";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = () => {
-    const {emailText, passText ,isChecked, setEmailText, setPassText, setIsChecked, login} = useLogin();
+    const {emailText, passText, nameText, checkPassword, setEmailText, setPassText, setNameText, setCheckPassword, signup} = useSignup();
   
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <S.Container>
-          <S.LogoView> 
-            <S.Logo>가려두</S.Logo>
+          <S.LogoView>
+            <S.Logo source={require("../../assets/images/react-logo.png")} />
           </S.LogoView>
           <S.TextInputView>
-            <StyledInput
+          <StyledInput
               placeholder="이메일를 입력하세요"
               value={emailText}
               onChangeText={setEmailText}
+            />
+            <StyledInput
+              placeholder="이름를 입력하세요"
+              value={nameText}
+              onChangeText={setNameText}
+              keyboardType="phone-pad"
             />
             <StyledInput 
               placeholder="비밀번호를 입력하세요"
@@ -27,26 +33,19 @@ const Login = () => {
               onChangeText={setPassText}
               secureTextEntry
             />
-            <S.SaveIdView>
-                <S.SaveIdBtn isChecked={isChecked}
-                    onPress={() => setIsChecked(!isChecked)}>
-                  <S.SaveIdBtnIcon source={require("@/assets/images/check.png")} isChecked={isChecked} />
-                </S.SaveIdBtn>
-                <S.SaveIdText>자동 로그인</S.SaveIdText>
-            </S.SaveIdView>
+            <StyledInput 
+              placeholder="비밀번호를 입력하세요"
+              value={checkPassword}
+              onChangeText={setCheckPassword}
+              secureTextEntry
+            />
             <StyledBtn
-              label="로그인" 
+              label="회원가입" 
               isActive={true} 
               onPress={() => {
-                  login()
+                  signup()
               }}
             />
-            <S.SignupTextWrapper>
-              <S.SignupGuideText>아직 계정이 없다면?</S.SignupGuideText>
-              <S.SignupLink onPress={()=> {router.replace("/(signup)")}}>
-                회원가입
-              </S.SignupLink>
-            </S.SignupTextWrapper>
           </S.TextInputView>
         </S.Container>
       </SafeAreaView>
