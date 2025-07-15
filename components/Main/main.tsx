@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import * as S from './style';
-
 const HomeScreen = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const defaultImage = require('@/assets/images/User.png'); // 로컬 기본 이미지
