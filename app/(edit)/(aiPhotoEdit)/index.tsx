@@ -5,6 +5,9 @@ import CustomView from '@/components/ui/CustomView'
 import { ThemedText } from '@/components/ThemedText'
 import * as S from './style'
 import CustomIcon from '@/components/ui/CustomIcon'
+import StyledBtn from '@/components/ui/StyledBtn'
+import { View } from 'react-native'
+
 
 const AiEdit = () => {
   const router = useRouter()
@@ -53,6 +56,7 @@ const AiEdit = () => {
         </S.ImageContainer>
       )}
       <S.Container>
+        <View style={{gap: 12}}>
         <ThemedText type='HeadingSmall'>편집 방식</ThemedText>
         <S.SelectButtonWrapper>
           <S.MethodButton 
@@ -89,7 +93,10 @@ const AiEdit = () => {
             </ThemedText>
           </S.MethodButton>
         </S.SelectButtonWrapper>
+        </View>
+        <StyledBtn label='사진 편집' isActive={!!selectedMethod} onPress={()=>{router.push('/(edit)/(aiPhotoEdit)')}}/>
       </S.Container>
+     
     </CustomView>
   )
 }

@@ -6,7 +6,9 @@ export const ImageContainer = styled.View`
   margin: 20px;
 `
 export const Container = styled.View`
-    gap:16px;
+    flex: 1;
+    justify-content: space-between;
+    width: 100%;
 `
 export const SelectWrapper = styled.View`
     gap:12px;
