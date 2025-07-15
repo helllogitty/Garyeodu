@@ -58,7 +58,7 @@ function optimizeImageSize(imageBuffer: Buffer, maxWidth: number = 1024): Buffer
  * @param {string|Buffer} imagePath - 이미지 파일 경로 또는 Buffer
  * @returns {Promise<Object>} 개인정보 감지 결과
  */
-async function detectPersonalInfo(imagePath: string | Buffer) {
+export const detectPersonalInfo = async (imagePath: string | Buffer): Promise<Object> => {
   try {
     const detections: Array<{ 위치: { x: number; y: number; width: number; height: number } | null; 종류: string }> = [];
     
@@ -190,14 +190,14 @@ async function detectPersonalInfo(imagePath: string | Buffer) {
       }
     };
   }
-}
+};
 
 /**
  * 배치 처리용 함수 (다중 이미지 처리)
  * @param {Array} imagePaths - 이미지 경로 배열
  * @returns {Promise<Array>} 각 이미지의 분석 결과 배열
  */
-async function detectPersonalInfoBatch(imagePaths: Array<string | Buffer>) {
+export const detectPersonalInfoBatch = async (imagePaths: Array<string | Buffer>): Promise<Array<Object>> => {
   const results = [];
   
   for (const imagePath of imagePaths) {
@@ -252,9 +252,3 @@ async function detectPersonalInfoBatch(imagePaths: Array<string | Buffer>) {
 //     console.error('예시 실행 에러:', error);
 //   }
 // }
-
-// 메인 함수들 내보내기
-module.exports = {
-  detectPersonalInfo, // 하나
-  detectPersonalInfoBatch // 다수 
-};

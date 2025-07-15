@@ -12,6 +12,7 @@ export async function util_signUp(
   signupDto: SignupDto
 ): Promise<SignupReturnDto | ErrorReturnDto> {
   const { email, password, name } = signupDto;
+  console.log(email,password)
   const userCredential = await createUserWithEmailAndPassword(
     auth,
     email,
