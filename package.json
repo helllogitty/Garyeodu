@@ -57,7 +57,6 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.11.2",
-    "react-native-svg-transformer": "^1.5.1",
     "react-native-web": "^0.20.0",
     "react-native-webview": "^13.13.5",
     "styled-components": "^6.1.18",
@@ -66,9 +65,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@expo/metro-config": "^0.20.17",
     "@types/react": "~19.0.10",
+    "@types/styled-components-react-native": "^5.2.5",
     "eslint": "^9.28.0",
     "eslint-config-expo": "^9.2.0",
+    "react-native-svg-transformer": "^1.5.1",
     "typescript": "~5.8.3"
   },
   "private": true
