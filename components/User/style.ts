@@ -1,8 +1,9 @@
 import styled from "styled-components/native";
 
-export const Container = styled.SafeAreaView`
+export const Container = styled.View`
   flex: 1;
   background-color: #fff;
+  padding-top : 24px;
 `;
 
 export const HeaderContainer = styled.View`

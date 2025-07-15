@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { XMLParser } from 'fast-xml-parser';
 import React, { useEffect, useState } from 'react';
-import { Linking, ScrollView } from 'react-native';
+import { Linking, ScrollView, View } from 'react-native';
 import * as S from './style';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -61,21 +60,18 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex : 1}}>
       <S.Container>
-        <ScrollView>
-          <S.ProfileRow>
-            <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
-            <S.Header>이윤하님</S.Header>
-          </S.ProfileRow>
+        <S.ProfileRow>
+          <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
+          <S.Header>이윤하님</S.Header>
+        </S.ProfileRow>
 
-          <S.BannerWrapper>
-            <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
-            <S.BannerText>Service Update</S.BannerText>
-          </S.BannerWrapper>
-
+        <S.BannerWrapper>
+          <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
+          <S.BannerText>Service Update</S.BannerText>
+        </S.BannerWrapper>
+        <View>
           <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
-
           {newsList.map((item, index) => {
             const fullUrl = item.링크.startsWith('http') ? item.링크 : `https://${item.링크}`;
             return (
@@ -88,25 +84,22 @@ const HomeScreen = () => {
                   <S.NewsSource>{item.날짜}</S.NewsSource>
                 </S.NewsTextContainer>
               </S.NewsItem>
-            );
-          })}
-
-          {/* <S.SectionTitle>퀴즈</S.SectionTitle> */}
-          {/* <S.QuizContainer>
-            <S.QuizText>
-              <S.QuizTitle>Test Your Knowledge</S.QuizTitle>
-              <S.QuizDescription>
-                Take a quick quiz to assess your understanding of online privacy best practices.
-              </S.QuizDescription>
-              <S.QuizButton>
-                <S.QuizButtonText>Start Quiz</S.QuizButtonText>
-              </S.QuizButton>
-            </S.QuizText>
-            <S.QuizImage source={require('@/assets/images/QuizImage.png')} />
-          </S.QuizContainer> */}
-        </ScrollView>
+            );})}
+        </View>
+        {/* <S.SectionTitle>퀴즈</S.SectionTitle> */}
+        {/* <S.QuizContainer>
+          <S.QuizText>
+            <S.QuizTitle>Test Your Knowledge</S.QuizTitle>
+            <S.QuizDescription>
+              Take a quick quiz to assess your understanding of online privacy best practices.
+            </S.QuizDescription>
+            <S.QuizButton>
+              <S.QuizButtonText>Start Quiz</S.QuizButtonText>
+            </S.QuizButton>
+          </S.QuizText>
+          <S.QuizImage source={require('@/assets/images/QuizImage.png')} />
+        </S.QuizContainer> */}
       </S.Container>
-    </SafeAreaView>
   );
 };
 

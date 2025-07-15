@@ -24,7 +24,7 @@ const SelectPhoto = () => {
   };
 
   return (
-    <CustomView title="사진 선택" icon="cancel" onPressLeftIcon={() => {}}>
+    <CustomView title="사진 선택" icon="cancel" onPressLeftIcon={() => {router.replace("/(main)/home")}}>
       <S.Container>
         <S.Buttons>
           <PicBtn onImageSelected={handleImageSelected} />

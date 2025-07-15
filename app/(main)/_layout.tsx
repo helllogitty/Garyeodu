@@ -1,32 +1,57 @@
-import { Slot } from 'expo-router';
 import { Tabs } from 'expo-router/tabs';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Image } from 'react-native';
 
 export default function MainLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'blue' }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarShowLabel: false }}>
       <Tabs.Screen
-        name="(home)/index"
+        name="home"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../../assets/icons/material-symbols_home-rounded.png')}
+              style={{
+                width: 24,
+                height: 24,
+                tintColor: focused ? '#000000' : '#8e8e93',
+              }}
+              resizeMode="contain"
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="(edit)/index"
+        name="(edit)"
         options={{
-          title: 'edit',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../../assets/icons/ph_plus-fill.png')}
+              style={{
+                width: 24,
+                height: 24,
+                tintColor: focused ? '#000000' : '#8e8e93',
+              }}
+              resizeMode="contain"
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="(user)/index"
+        name="user"
         options={{
-          title: 'user',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../../assets/icons/tabler_user-filled.png')}
+              style={{
+                width: 24,
+                height: 24,
+                tintColor: focused ? '#000000' : '#8e8e93',
+              }}
+              resizeMode="contain"
+            />
+          ),
         }}
       />
-      
     </Tabs>
   );
 }
