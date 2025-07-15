@@ -17,7 +17,7 @@ const SelectPhoto = () => {
   const handleSelectComplete = () => {
     if (selectedImage) {
       router.push({
-        pathname: '/(edit)/(aiPhotoEdit)',
+        pathname: '/(edit)/(1stInspection)',
         params: { imageUri: selectedImage }
       });
     }

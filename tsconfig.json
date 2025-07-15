@@ -2,11 +2,15 @@
   "extends": "./node_modules/expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "module": "es2020",        
+    "module": "es2020",       
+    "baseUrl": ".",
+
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "dto/*": ["./src/dto/*"],
+      "entity/*": ["./src/entity/*"]
     },
     "typeRoots": ["./types", "./node_modules/@types"]
   },
