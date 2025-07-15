@@ -4,15 +4,23 @@ import StyledBtn from "@/components/ui/StyledBtn";
 import { detectPersonalInfoAPI } from "@/hooks/detectPersonalInfoAPI";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, Image } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  View,
+} from "react-native";
 import * as S from "./style";
 
 interface DetectedArea {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  type: string;
+  위치: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  };
+  종류: string;
 }
 
 const FirstInspection = () => {
@@ -34,108 +42,125 @@ const FirstInspection = () => {
 
   useEffect(() => {
     if (imageUri) {
-      // 이미지 크기 계산
-      Image.getSize(imageUri, (width, height) => {
-        setOriginalDimensions({ width, height });
-
-        const maxWidth = screenWidth * 0.8;
-        const maxHeight = 400;
-        const ratio = width / height;
-
-        let newWidth = maxWidth;
-        let newHeight = maxWidth / ratio;
-
-        if (newHeight > maxHeight) {
-          newHeight = maxHeight;
-          newWidth = maxHeight * ratio;
+      // 이미지 크기 가져오기 (에러 처리 추가)
+      Image.getSize(
+        imageUri,
+        (width, height) => {
+          setOriginalDimensions({ width, height });
+          const maxWidth = screenWidth * 0.8;
+          const maxHeight = 400;
+          const ratio = width / height;
+          let newWidth = maxWidth;
+          let newHeight = maxWidth / ratio;
+          if (newHeight > maxHeight) {
+            newHeight = maxHeight;
+            newWidth = maxHeight * ratio;
+          }
+          setImageDimensions({ width: newWidth, height: newHeight });
+        },
+        (error) => {
+          console.error("이미지 크기 가져오기 실패:", error);
+          Alert.alert("오류", "이미지를 불러올 수 없습니다.");
         }
+      );
 
-        setImageDimensions({ width: newWidth, height: newHeight });
-      });
-
-      // 자동으로 개인정보 감지 실행
+      // 개인정보 감지 실행
       handleDetectPersonalInfo();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageUri, screenWidth]);
 
   const handleDetectPersonalInfo = async () => {
     if (!imageUri) return;
-
     setIsLoading(true);
+    setHasDetected(false);
+
     try {
-      // 이미지 파일 객체 생성
-      let imageFile: any = null;
-      if (imageUri.startsWith("file://")) {
-        imageFile = {
-          uri: imageUri,
-          type: "image/jpeg",
-          name: "image.jpg",
-        };
-      } else {
-        // 네트워크 이미지 등은 fetch로 Blob 변환 필요
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        imageFile = new File([blob], "image.jpg", { type: "image/jpeg" });
-      }
+      // React Native에서는 항상 file:// URI 형태로 처리
+      const imageFile = {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: "image.jpg",
+      };
 
-      // detectPersonalInfoAPI에 파일 객체 전달
+      console.log("이미지 파일 정보:", imageFile);
+
       const result = await detectPersonalInfoAPI(imageFile);
+      console.log("API 응답:", result);
 
-      // API 응답 구조에 맞게 파싱 (실제 API 응답 구조에 따라 수정 필요)
-      if (result && result.data) {
+      const detectedData = result["이미지 파일 개인정보 문제"];
+
+      if (detectedData && typeof detectedData === "object") {
         const areas: DetectedArea[] = [];
-
-        // API 응답 구조가 확실하지 않으므로 여러 가능성 고려
-        const detectedData =
-          result.data["이미지 파일 개인정보 문제"] || result.data || result;
-
-        if (typeof detectedData === "object") {
-          Object.values(detectedData).forEach((info: any) => {
-            if (info.위치 && info.종류) {
-              areas.push({
-                x: info.위치.x,
-                y: info.위치.y,
-                width: info.위치.width,
-                height: info.위치.height,
-                type: info.종류,
-              });
-            }
-          });
-        }
-
+        Object.values(detectedData).forEach((info: any) => {
+          if (info.위치 && info.종류) {
+            areas.push({
+              위치: info.위치,
+              종류: info.종류,
+            });
+          }
+        });
         setDetectedAreas(areas);
-        setHasDetected(true);
+        console.log("감지된 영역:", areas);
+      } else {
+        console.log("감지된 개인정보 없음");
+        setDetectedAreas([]);
       }
     } catch (error) {
       console.error("개인정보 감지 실패:", error);
-      setHasDetected(true);
+      Alert.alert(
+        "오류",
+        "개인정보 감지 중 문제가 발생했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.",
+        [
+          { text: "다시 시도", onPress: () => handleDetectPersonalInfo() },
+          { text: "취소", style: "cancel" },
+        ]
+      );
     } finally {
       setIsLoading(false);
+      setHasDetected(true);
     }
   };
 
-  // 좌표를 화면 크기에 맞게 변환
   const scaleCoordinates = (area: DetectedArea) => {
+    if (originalDimensions.width === 0 || originalDimensions.height === 0) {
+      return { x: 0, y: 0, width: 0, height: 0 };
+    }
+
     const scaleX = imageDimensions.width / originalDimensions.width;
     const scaleY = imageDimensions.height / originalDimensions.height;
 
     return {
-      x: area.x * scaleX,
-      y: area.y * scaleY,
-      width: area.width * scaleX,
-      height: area.height * scaleY,
+      x: area.위치.left * scaleX,
+      y: area.위치.top * scaleY,
+      width: area.위치.width * scaleX,
+      height: area.위치.height * scaleY,
     };
   };
 
   const handleNext = () => {
+    if (!imageUri) return;
+
+    const imageFile = {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: imageUri.split("/").pop() || "image.jpg",
+    };
+
+    // 감지된 영역 데이터를 다음 화면으로 전달
     router.push({
-      pathname: "/(edit)/(aiPhotoEdit)",
+      pathname: "/(main)/(edit)/(aiPhotoEdit)",
       params: {
-        imageUri: imageUri,
+        imageFile: JSON.stringify(imageFile),
         detectedAreas: JSON.stringify(detectedAreas),
+        originalDimensions: JSON.stringify(originalDimensions),
       },
     });
+  };
+
+  const handleRetry = () => {
+    setHasDetected(false);
+    setDetectedAreas([]);
+    handleDetectPersonalInfo();
   };
 
   return (
@@ -197,16 +222,17 @@ const FirstInspection = () => {
                   height: imageDimensions.height,
                 }}
                 resizeMode="contain"
+                onError={(error) => {
+                  console.error("이미지 로드 실패:", error);
+                  Alert.alert("오류", "이미지를 표시할 수 없습니다.");
+                }}
               />
-
-              {/* 감지된 영역에 동그라미 표시 */}
               {detectedAreas.map((area, index) => {
                 const scaledArea = scaleCoordinates(area);
                 const centerX = scaledArea.x + scaledArea.width / 2;
                 const centerY = scaledArea.y + scaledArea.height / 2;
                 const radius =
                   Math.max(scaledArea.width, scaledArea.height) / 2 + 15;
-
                 return (
                   <S.DetectionCircle
                     key={index}
@@ -223,7 +249,6 @@ const FirstInspection = () => {
           )}
         </S.ImageContainer>
 
-        {/* 감지된 정보 목록 */}
         {detectedAreas.length > 0 && (
           <S.DetectionList>
             <ThemedText
@@ -234,15 +259,14 @@ const FirstInspection = () => {
             </ThemedText>
             {detectedAreas.map((area, index) => (
               <S.DetectionItem key={index}>
-                <ThemedText type="bodySmall1">• {area.type}</ThemedText>
+                <ThemedText type="bodySmall1">• {area.종류}</ThemedText>
               </S.DetectionItem>
             ))}
           </S.DetectionList>
         )}
 
-        {/* 다음 단계 버튼 */}
         {hasDetected && !isLoading && (
-          <>
+          <View style={{ width: "100%", marginTop: 20, gap: 12 }}>
             {detectedAreas.length > 0 ? (
               <StyledBtn
                 label="다음 단계로"
@@ -251,14 +275,18 @@ const FirstInspection = () => {
               />
             ) : (
               <StyledBtn
-                label="처음으로"
-                onPress={() => {
-                  router.dismiss(1);
-                }}
+                label="사진 다시 선택"
+                onPress={() => router.back()}
                 isActive={true}
               />
             )}
-          </>
+            <StyledBtn
+              label="다시 검사하기"
+              onPress={handleRetry}
+              isActive={true}
+              style={{ backgroundColor: "#f0f0f0" }}
+            />
+          </View>
         )}
       </S.Container>
     </CustomView>

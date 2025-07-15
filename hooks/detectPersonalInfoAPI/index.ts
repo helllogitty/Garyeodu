@@ -4,7 +4,7 @@ export const detectPersonalInfoAPI = async (imageFile: any): Promise<any> => {
     formData.append("image", imageFile);
 
     const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_BASE_URL}/image-processing/detect`,
+      `https://port-0-garyeodu-img-server-m63r1iv4e3e8a9d8.sel4.cloudtype.app/image-processing/detect`,
       {
         method: "POST",
         body: formData,
