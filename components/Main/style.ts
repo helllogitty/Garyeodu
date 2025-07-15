@@ -10,20 +10,13 @@ export const Header = styled.Text`
   font-weight: bold;
 `;
 
-export const BannerImage = styled.Image`
-  width: 100pxs;
-  height: 350px;
-  margin: 0 16px;
-  border-radius: 12px;
-`;
-
 export const SectionTitle = styled.Text`
   font-size: 16px;
   font-weight: bold;
   margin: 20px 16px 10px 16px;
 `;
 
-export const NewsItem = styled.View`
+export const NewsItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 10px 16px;
@@ -40,7 +33,8 @@ export const NewsTextContainer = styled.View``;
 
 export const NewsTitle = styled.Text`
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+  color: #333;
 `;
 
 export const NewsSource = styled.Text`
@@ -101,5 +95,38 @@ export const Avatar = styled.Image`
   height: 36px;
   border-radius: 18px;
   margin-right: 10px;
+`;
+export const NewsItemHorizontal = styled.TouchableOpacity`
+  width: 220px;
+  margin-right: 12px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 12px;
+  flex-direction: row;
+  align-items: center;
+  elevation: 2;
+  shadow-color: #000;
+  shadow-opacity: 0.1;
+  shadow-radius: 4px;
+`;
+export const BannerWrapper = styled.View`
+  position: relative;
+  width: 100%;
+  align-items: center;
+`;
+
+export const BannerImage = styled.Image`
+  width: 400px;
+  height: 220px;
+  border-radius: 12px;
+`;
+
+export const BannerText = styled.Text`
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
 `;
 

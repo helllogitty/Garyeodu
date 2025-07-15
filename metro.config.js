@@ -1,10 +1,13 @@
-const { getDefaultConfig } = require('@expo/metro-config');
+const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
-
-// SVG 지원 추가
-config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
-config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== 'svg');
-config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg'];
+config.transformer.assetPlugins = ['expo-asset/tools/hashAssetFiles'];
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: false,
+  },
+});
+config.resolver.sourceExts.push('json'); 
 
 module.exports = config;
