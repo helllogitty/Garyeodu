@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import colors from "../../styles/colors";
-import { ThemedText } from "@/components/ThemedText";
+import { Dimensions } from "react-native";
 
 export const Container = styled.View`
     flex:1;
@@ -19,9 +19,9 @@ export const TextInputView = styled.View`
 export const Input = styled.TextInput`
     border: 1px solid ${colors.gray5};
     border-radius: 16;
-    border-radius: 16px;
-    height: 60px;
-    font-size: 16px;
+    height: 60;
+    padding: 0 16px;
+    font-size: 16;
     background-color: ${colors.gray5};
 `
 export const InputFocused = styled.View`
@@ -46,9 +46,9 @@ export const SaveIdBtn = styled.TouchableOpacity<{isChecked:boolean}>`
 `
 
 // style.ts 내부에 추가
-export const Logo = styled(ThemedText)`
-  font-family : 'SokchoBadaDotum';
-  font-size: 32px;
+export const Logo = styled.Image`
+  width: 59px;
+  height: 34px;
 `;
 
 export const SaveIdText = styled.Text`
@@ -66,7 +66,7 @@ export const SignupTextWrapper = styled.View`
 export const SignupGuideText = styled.Text``;
 
 export const SignupLink = styled.Text`
-  color: ${colors.blue};
+  color: ${colors.primary};
   text-decoration: underline;
   text-decoration-color: ${colors.primary};
 `;
