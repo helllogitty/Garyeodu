@@ -1,7 +1,8 @@
 import { SigninDto } from "@/types/dto/authDto";
 import { util_signIn } from "@/util/util_signin";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { useState } from "react";
-import { AmbientLight } from "three/src/Three.Core.js";
 
 export const useLogin = () =>{
 
@@ -14,7 +15,15 @@ export const useLogin = () =>{
     signinDto.password = passText
 
     const login = async() =>{
+        if (isChecked && emailText && passText) {
+            try {
+                await AsyncStorage.setItem('USER', JSON.stringify(signinDto));
+            } catch (error) {
+                console.error("로그인 실패:", error);
+            }
+        }
         util_signIn(signinDto)
+        router.replace("/(main)");
     }
 
     return {emailText, passText ,isChecked, setEmailText, setPassText, setIsChecked, login}
