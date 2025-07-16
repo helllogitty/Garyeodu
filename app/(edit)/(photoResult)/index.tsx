@@ -109,25 +109,7 @@ const Result = () => {
       title="편집 결과"
       onPressLeftIcon={() => { router.back() }}
     >
-      <S.ImageContainer>
-        {photoData?.imageUri ? (
-          imageDimensions.width > 0 ? (
-            <Image
-              source={{ uri: showingBefore ? photoData.imageUri : blurredImageUri || photoData.imageUri }}
-              style={{
-                width: imageDimensions.width,
-                height: imageDimensions.height,
-              }}
-              resizeMode="contain"
-              onError={(error) => console.error('Image render error:', error)}
-            />
-          ) : (
-            <ThemedText>이미지 로딩 중...</ThemedText>
-          )
-        ) : (
-          <ThemedText>이미지 URI가 없습니다</ThemedText>
-        )}
-      </S.ImageContainer>
+      
       <View style={{ gap: 12, marginTop: 20, justifyContent: 'flex-end', flex: 1 }}>
         <StyledBtn
           label='편집 완료'
