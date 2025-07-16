@@ -3,13 +3,39 @@ import CustomIcon from "@/components/ui/CustomIcon";
 import CustomView from "@/components/ui/CustomView";
 import StyledBtn from "@/components/ui/StyledBtn";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Image, View } from "react-native";
 import * as S from "./style";
+import { processImageAPI } from "@/hooks/processImageAPI";
 
 const AiEdit = () => {
   const router = useRouter();
-  const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
+  const { imageUri, detectedAreas } = useLocalSearchParams<{
+    imageUri: string;
+    detectedAreas: string;
+  }>();
+
+  const parsedDetectedAreas = useMemo(() => {
+    try {
+      return JSON.parse(detectedAreas);
+    } catch {
+      return [];
+    }
+  }, [detectedAreas]);
+
+  const getResult = async () => {
+    const imageName = imageUri.split("/").pop()
+    console.log(imageName)
+    const imageFile = {
+      uri: imageUri,
+      name: imageName,
+      type: "image/jpeg",
+    };
+    console.log(imageFile, parsedDetectedAreas);
+    const resultUri = await processImageAPI(imageFile, parsedDetectedAreas,selectedMethod);
+    return resultUri;
+  };
+
   const screenWidth = Dimensions.get("window").width;
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
@@ -19,10 +45,11 @@ const AiEdit = () => {
     "mosaic"
   ); // 추가
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    const result: string = await getResult();
     router.push({
-      pathname: "/(edit)/(photoResult)",
-      params: { imageUri: imageUri }, // imageUri 전달
+      pathname: "/(main)/(edit)/(photoResult)",
+      params: { imageUri: result,},
     });
   };
 
