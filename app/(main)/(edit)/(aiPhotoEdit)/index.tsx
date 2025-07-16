@@ -46,10 +46,10 @@ const AiEdit = () => {
   ); // 추가
 
   const handleComplete = async () => {
-    const result: string = await getResult();
+    // const result: string = await getResult();
     router.push({
       pathname: "/(main)/(edit)/(photoResult)",
-      params: { imageUri: result,},
+      params: { imageUri: imageUri},
     });
   };
 
