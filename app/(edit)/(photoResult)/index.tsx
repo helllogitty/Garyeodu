@@ -143,7 +143,7 @@ const Result = () => {
         />
       </View>
     </CustomView>
-  )
-}
+  );
+};
 
-export default Result
+export default Result;

@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { XMLParser } from 'fast-xml-parser';
 import React, { useEffect, useState } from 'react';
-import { Linking, ScrollView } from 'react-native';
+import { Linking, Pressable, ScrollView } from 'react-native';
 import * as S from './style';
+import { useRouter } from 'expo-router';
 
 const HomeScreen = () => {
+  const router = useRouter();
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [newsList, setNewsList] = useState<NewsItemType[]>([]);
   const defaultImage = require('@/assets/images/User.png');
@@ -66,11 +68,13 @@ const HomeScreen = () => {
           <S.Avatar source={imageUri ? { uri: imageUri } : defaultImage} />
           <S.Header>이윤하님</S.Header>
         </S.ProfileRow>
-
+        <Pressable onPress={()=> {router.push('/(edit)')}}>
         <S.BannerWrapper>
           <S.BannerImage source={require('@/assets/images/Mainbanner.png')} />
           <S.BannerText>Service Update</S.BannerText>
         </S.BannerWrapper>
+        </Pressable>
+        
 
         <S.SectionTitle>최신 정보 유출 뉴스</S.SectionTitle>
 
